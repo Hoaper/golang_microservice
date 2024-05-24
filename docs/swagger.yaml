@@ -1,0 +1,234 @@
+definitions:
+  models.Car:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: integer
+      mark:
+        type: string
+      model:
+        type: string
+      owner:
+        $ref: '#/definitions/models.People'
+      ownerID:
+        type: integer
+      regNum:
+        type: string
+      updatedAt:
+        type: string
+      year:
+        type: integer
+    type: object
+  models.People:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      surname:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  v1.CarRequest:
+    properties:
+      peopleId:
+        type: integer
+      regNums:
+        items:
+          type: string
+        type: array
+    type: object
+  v1.PeopleRequest:
+    properties:
+      name:
+        type: string
+      surname:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /cars:
+    get:
+      consumes:
+      - application/json
+      description: get cars by filter
+      parameters:
+      - description: page number
+        in: query
+        name: page
+        type: integer
+      - description: items per page
+        in: query
+        name: pageSize
+        type: integer
+      - description: registration number
+        in: query
+        name: regNum
+        type: string
+      - description: mark
+        in: query
+        name: mark
+        type: string
+      - description: model
+        in: query
+        name: model
+        type: string
+      - description: year
+        in: query
+        name: year
+        type: integer
+      - description: created at
+        in: query
+        name: createdAt
+        type: string
+      - description: updated at
+        in: query
+        name: updatedAt
+        type: string
+      - description: deleted at
+        in: query
+        name: deletedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Car'
+            type: array
+      summary: Get cars with filter and pagination
+      tags:
+      - cars
+    post:
+      consumes:
+      - application/json
+      description: add new cars by registration numbers
+      parameters:
+      - description: Register numbers of cars to add
+        in: body
+        name: cars
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CarRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully added
+          schema:
+            type: string
+      summary: Add new cars
+      tags:
+      - cars
+  /cars/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: update car by ID
+      parameters:
+      - description: Car ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Car object
+        in: body
+        name: car
+        required: true
+        schema:
+          $ref: '#/definitions/models.Car'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Car'
+      summary: Update a car
+      tags:
+      - cars
+  /cars/{regNum}:
+    delete:
+      consumes:
+      - application/json
+      description: delete car by registration number
+      parameters:
+      - description: Registration number
+        in: path
+        name: regNum
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted
+          schema:
+            type: string
+      summary: Delete a car
+      tags:
+      - cars
+  /info:
+    get:
+      consumes:
+      - application/json
+      description: Get cars info by regNum
+      parameters:
+      - description: Registration number
+        example: X123XX150
+        in: query
+        name: regNum
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Car'
+        "400":
+          description: regNum is required
+          schema:
+            type: string
+        "404":
+          description: car not found
+          schema:
+            type: string
+      summary: Get car info
+      tags:
+      - cars
+  /people:
+    post:
+      consumes:
+      - application/json
+      description: create new people
+      parameters:
+      - description: People object
+        in: body
+        name: people
+        required: true
+        schema:
+          $ref: '#/definitions/v1.PeopleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.People'
+      summary: Create a new people
+      tags:
+      - people
+swagger: "2.0"
